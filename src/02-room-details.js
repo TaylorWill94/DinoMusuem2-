@@ -99,7 +99,7 @@ getRoomByDinosaurName(exampleDinosaurData, exampleRoomData, "Pterodactyl");
 // Refer to the test
 
 function getConnectedRoomNamesById(rooms, id) {
-  let message = `Room with ID of 'incorrect-id' could not be found.`;
+  let message = `Room with ID of '${id} could not be found.`;
   let conRooms = [];
   let numOfCons = 0;
 
