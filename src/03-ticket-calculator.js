@@ -62,34 +62,42 @@ const exampleTicketData = require("../data/tickets");
 // Create an if statement that determines what price to output
 
 function calculateTicketPrice(ticketData, ticketInfo) {
-  if (ticketInfo.ticketType in ticketData === false) {
-    return `Ticket type '${ticketInfo.ticketType}' cannot be found.`;
-  } else if (
-    ticketInfo.entrantType in ticketData.general.priceInCents ===
-    false
-  ) {
-    return `Entrant type '${ticketInfo.entrantType}' cannot be found.`;
+  let type = ticketInfo.ticketType;
+  let entrant = ticketInfo.entrantType;
+  let price = "priceInCents";
+  let extras = ticketData.extras;
+
+  let dinoArr = [
+    "general",
+    "membership",
+    "adult",
+    "child",
+    "senior",
+    "movie",
+    "education",
+    "terrace",
+  ];
+
+  if (!dinoArr.includes(type)) {
+    return "Ticket type 'incorrect-type' cannot be found.";
   }
-  for (const extra of ticketInfo.extras) {
-    if (extra in ticketData.extras === false) {
-      return `Extra type '${extra}' cannot be found.`;
+  if (!dinoArr.includes(entrant)) {
+    return "Entrant type 'incorrect-entrant' cannot be found.";
+  }
+
+  for (let extra of ticketInfo.extras) {
+    if (!dinoArr.includes(extra)) {
+      return "Extra type 'incorrect-extra' cannot be found.";
     }
   }
+  let totalCost = ticketData[type][price][entrant];
 
-  // Variable stores a base price.
-  let basePrice =
-    ticketData[ticketInfo.ticketType]["priceInCents"][ticketInfo.entrantType];
-
-  // how to get extra cost info basePrice
-  // If length of ticketInfo.extras array is not equal to 0
-  if (ticketInfo.extras.length !== 0) {
-    for (const extra of ticketInfo.extras) {
-      basePrice +=
-        ticketData.extras[extra]["priceInCents"][ticketInfo.entrantType];
-    }
+  for (let extra of ticketInfo.extras) {
+    // add totalCost += [extra][price][entrant]
+    totalCost += extras[extra][price][entrant];
   }
-
-  return basePrice;
+  // return totalCost
+  return totalCost;
 }
 
 /**
@@ -144,8 +152,59 @@ function calculateTicketPrice(ticketData, ticketInfo) {
     ]
     purchaseTickets(tickets, purchases);
     //> "Ticket type 'discount' cannot be found."
+
+    
  */
-function purchaseTickets(ticketData, purchases) {}
+
+function capital(entrantType) {
+  entrantType = entrantType.charAt(0).toUpperCase() + entrantType.slice(1);
+  return entrantType;
+}
+
+function purchaseTickets(ticketData, purchases) {
+  let receipt = "";
+  // declare variable for totalCost to 0
+  let totalCost = 0;
+  // iterate through purchases array
+  for (ticketInfo of purchases) {
+    // declare variable  currentCost = calculateTicketPrice(ticketData, ticketInfo)
+    let currentCost = calculateTicketPrice(ticketData, ticketInfo);
+    // conditional statement checking datatype('string')
+    if (typeof currentCost === "string") {
+      // return currentCost
+      return currentCost;
+    }
+    // declare variable with helper function for entrantType
+    let entrantType = capital(ticketInfo.entrantType);
+    // redefine current cost dollars && 2 decimal places as a number
+    currentCost = Number((currentCost / 100).toFixed(2));
+    // conditional statement checking if there are no extras
+    if (ticketInfo.extras.length === 0) {
+      receipt += `${entrantType} ${
+        ticketData[ticketInfo.ticketType].description
+      }: $${currentCost.toFixed(2)}\n`;
+    } else {
+      //  declare empty array
+      let extraArr = [];
+      // iterate through array of extras
+      for (let extra of ticketInfo.extras) {
+        extraArr.push(ticketData.extras[extra].description);
+      }
+      // reassign empty string to ticketInfo.entrant ticketData.[ticketInfo.ticketType].description : $currentCost $ticketInfo.extras.toString() \n
+      receipt += `${entrantType} ${
+        ticketData[ticketInfo.ticketType].description
+      }: $${currentCost.toFixed(2)} (${extraArr.join(", ")})\n`;
+    }
+    // reassign totalCost to += currentCost
+    totalCost += currentCost;
+  }
+  // declare variable receiptWords to Thank you for visiting the Dinosaur Museum!\n-------------------------------------------\n$receipt\n-------------------------------------------\nTOTAL: totalCost/100.toFixed(2)
+  let receiptWords = `Thank you for visiting the Dinosaur Museum!\n-------------------------------------------\n${receipt}-------------------------------------------\nTOTAL: $${totalCost.toFixed(
+    2
+  )}`;
+  // return receiptWords
+  return receiptWords;
+}
 
 // Do not change anything below this line.
 module.exports = {

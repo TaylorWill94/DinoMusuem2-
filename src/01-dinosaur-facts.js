@@ -23,22 +23,26 @@ const exampleDinosaurData = require("../data/dinosaurs");
  *  //> { Brachiosaurus: 98.43 }
  */
 function getTallestDinosaur(dinosaurs) {
-  // Create a variable that holds an empty object
-  let newObj = {};
+  let tallestDino = {};
   if (dinosaurs.length === 0) {
-    return {};
+    return tallestDino;
   }
-  // Create a variable that holds each dinosaur
-  let dinoHeight = dinosaurs[0];
-  // Create a loop that loops through each dinosaur in the array
+  // This function returns the tallest dinosaur from the list
+  // Create a variable that holds an empty Object
+  let currentTallest = dinosaurs[0];
+  // Create a variable that converts meters to feet
+  // Create a loop that goes through each dinosaur and gets the tallest
   for (let i = 1; i < dinosaurs.length; i++) {
-    // Create an if statement to find the tallest designer
-    if (dinosaurs[i].lengthInMeters > dinoHeight.lengthInMeters) {
-      dinoHeight = dinosaurs[i];
+    // create a variable that holds each dinoasaur
+    const dino = dinosaurs[i];
+    // Create an if statement that puts the name of the tallest dinosaur and height in object.
+    if (dino.lengthInMeters > currentTallest.lengthInMeters) {
+      currentTallest = dino;
     }
   }
-  newObj[dinoHeight.name] = dinoHeight.lengthInMeters * 3.281;
-  return newObj;
+  tallestDino[currentTallest.name] = currentTallest.lengthInMeters * 3.281;
+  return tallestDino;
+  //return {currentTallest.name : currentTallest.lengthInMeters * 3.281}
 }
 /**
  * getDinosaurDescription()
@@ -64,16 +68,13 @@ function getTallestDinosaur(dinosaurs) {
 
  * // PSUEDOCODE !!
  * 
- * // 1. Create a variable and assign it to an empty string 
- * // 2. Createa a guard if no dinosaur can be found
- * // 3. Create a for loop that loops through each dinosaur
+ * // 
  */
 function getDinosaurDescription(dinosaurs, id) {
-  let dinoDetails = "";
-  if (id !== dinosaurs.dinosaurId) {
-    dinoDetails = "A dinosaur with an ID of 'incorrect-id' cannot be found.";
-  }
-
+  // 1. Create a variable and assign it to an empty string
+  let dinoDetails = `A dinosaur with an ID of '${id}' cannot be found.`;
+  // 2. Create a a guard if no dinosaur can be found
+  // 3. Create a for loop that loops through each dinosaur
   for (let i = 0; i < dinosaurs.length; i++) {
     const dino = dinosaurs[i];
     if (dino.dinosaurId === id) {
@@ -123,18 +124,27 @@ function getDinosaurDescription(dinosaurs, id) {
 // If the dinosaur only has a singly mya year, return that specific value
 
 function getDinosaursAliveMya(dinosaurs, mya, key) {
-  //Define your default value
-  let dino = [];
-
-  //Define your loop
-  for (const i of dinosaurs) {
-    if (i.mya[i.mya.length - 1] === mya || i.mya - 1 === mya) {
-      dino.push(i[key]);
-    } else if (i.mya[i.mya.length - 1] === mya || i.mya - 1 === mya) {
-      dino.splice(0, dino.length, i.dinosaurId);
+  let dinoAlive = [];
+  for (let dinosaur of dinosaurs) {
+    if (dinosaur.mya.length > 1) {
+      if (dinosaur.mya[0] >= mya && dinosaur.mya[1] <= mya) {
+        if (key in dinosaur) {
+          dinoAlive.push(dinosaur[key]);
+        } else {
+          dinoAlive.push(dinosaur.dinosaurId);
+        }
+      }
+    } else if (dinosaur.mya.length === 1) {
+      if (dinosaur.mya[0] === mya || dinosaur.mya[0] === mya + 1) {
+        if (key in dinosaur) {
+          dinoAlive.push(dinosaur[key]);
+        } else {
+          dinoAlive.push(dinosaur.dinosaurId);
+        }
+      }
     }
   }
-  return dino;
+  return dinoAlive;
 }
 
 module.exports = {

@@ -99,25 +99,32 @@ getRoomByDinosaurName(exampleDinosaurData, exampleRoomData, "Pterodactyl");
 // Refer to the test
 
 function getConnectedRoomNamesById(rooms, id) {
-  let emptyArr = [];
-  for (let i = 0; i < rooms.length; i++) {
-    const room = rooms[i];
-    if (room.roomId.includes(id)) {
-      emptyArr = room.connectsTo;
-    }
-    for (let a = 0; a < rooms.length; a++) {
-      const string = rooms[a];
-      if (string.connectsTo.includes(string.roomId)) {
-        emptyArr = string.name;
-      } else if (id !== string.roomId) {
-        return `Room with ID of 'incorrect-id' could not be found.`;
-      } else id !== string.connectsTo;
-      {
-        return `Room with ID of 'incorrect-id' could not be found.`;
+  let message = `Room with ID of 'incorrect-id' could not be found.`;
+  let conRooms = [];
+  let numOfCons = 0;
+
+  for (room of rooms) {
+    if (room.roomId === id) {
+      let roomConnects = room.connectsTo;
+
+      numOfCons = roomConnects.length;
+
+      for (let connects of roomConnects) {
+        for (room of rooms) {
+          if (room.roomId === connects) {
+            conRooms.push(room.name);
+            message = conRooms;
+          }
+        }
       }
     }
   }
-  return emptyArr;
+  if (conRooms.length === numOfCons && conRooms.length > 0) {
+    return message;
+  } else {
+    message = `Room with ID of 'incorrect-id' could not be found.`;
+    return message;
+  }
 }
 
 module.exports = {
